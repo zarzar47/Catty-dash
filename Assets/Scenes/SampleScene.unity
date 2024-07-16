@@ -399,7 +399,7 @@ MonoBehaviour:
   moveMultipler: 10
   maxDragLength: 7
   center: {fileID: 1360353981}
-<<<<<<< HEAD
+
   trail: {fileID: 2900569271724396663, guid: 3b4958828ab1abf40a9d687919a0b2f6, type: 3}
 --- !u!1 &659872428
 GameObject:
@@ -522,8 +522,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-=======
->>>>>>> origin
+
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
