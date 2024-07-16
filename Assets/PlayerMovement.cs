@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 public class PlayerMovement : MonoBehaviour
@@ -18,14 +20,19 @@ public class PlayerMovement : MonoBehaviour
     private UnityEngine.Vector3 arrowVector = new UnityEngine.Vector3(0,0,0);
     private UnityEngine.Vector3 original_mouse_Posi = new UnityEngine.Vector3(0,0,0);
     public Transform center;
+    public GameObject cursor;
     private new Rigidbody rigidbody;
     private Vector3 old_velo = new Vector3(0,0,0);
     private Material ArrowMat;
+    private Animator arrowAnim;
+    private ParticleController _particleController;
     void Start()
     {
         Arrow.SetActive(false);
         rigidbody = GetComponent<Rigidbody>();
         ArrowMat = Arrow.GetComponentInChildren<MeshRenderer>().materials[0];
+        arrowAnim = Arrow.gameObject.GetComponentInChildren<Animator>();
+        _particleController = GetComponentInChildren<ParticleController>();
     }
 
     // Update is called once per frame
@@ -61,6 +68,8 @@ public class PlayerMovement : MonoBehaviour
     private void SlingShotInitialPos(){
         original_mouse_Posi = GetMousePos();
         Time.timeScale = timeSlowDown;
+        cursor.SetActive(true);
+        cursor.transform.position = original_mouse_Posi;
     }
     private void SlingShotTrajectory() {
         UnityEngine.Vector3 current_mousePos = GetMousePos();
@@ -77,15 +86,27 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
         // Normalize the direction vector to get a unit vector and scale it by the distance
-        arrowVector = direction.normalized * length * -1;
 
+        if (Arrow.activeSelf){
+            float var = length / maxDragLength;
+            if (var >= 0f && var < 0.33f && ArrowMat.color != Color.yellow){
+                ArrowMat.color = Color.yellow;
+                length = maxDragLength * 0.25f;
+                TweenArrow();
+            } else if (var >= 0.33f && var < 0.66f && ArrowMat.color != Color.blue){
+                ArrowMat.color = Color.blue;
+                length = maxDragLength * 0.625f;
+                TweenArrow();
+            } else if (var >= 0.66f && var <=1f && ArrowMat.color != Color.red){
+                ArrowMat.color = Color.red;
+                length = maxDragLength * 1f;
+                TweenArrow();
+            }
+        }
+        
+        arrowVector = direction.normalized * length * -1;
         transform.LookAt(center.position + arrowVector);
         AimArrow();
-        if (Arrow.activeSelf){
-            float normalizedLength = Mathf.InverseLerp(0f, 7f, length);
-            Color color = Color.Lerp(Color.white, Color.red, normalizedLength);
-            ArrowMat.color = color;
-        }
 
     }
 
@@ -94,6 +115,9 @@ public class PlayerMovement : MonoBehaviour
         moving = false;
         Arrow.SetActive(false);
         Time.timeScale = 1;
+        ArrowMat.color = Color.white;
+        _particleController.TriggerParticle(arrowVector.normalized);
+        cursor.SetActive(false);
     }
 
     private void OnCollisionEnter(Collision other) {
@@ -145,4 +169,9 @@ public class PlayerMovement : MonoBehaviour
             Arrow.SetActive(true);
         }
     }
+
+    void TweenArrow(){
+        arrowAnim.Play("ArrowShake",0);
+    }
+
 }
