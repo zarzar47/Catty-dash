@@ -3,9 +3,13 @@ using UnityEngine;
 
 public class TimeManager: MonoBehaviour
 {
-    public float targetTime = 0.0f;
+    public static float targetTime;
     public bool flag = false;
     public GameObject player; 
+    
+    void Start(){
+        targetTime = 0.0f;
+    }
     void Update(){
         if (!flag){
             targetTime += Time.deltaTime;
