@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using DG.Tweening;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -17,7 +16,7 @@ public class PlayerMovement : MonoBehaviour
     public float maxDragLength = 6.5f;
     private bool aiming = false;
     private bool moving = false;
-    private UnityEngine.Vector3 arrowVector = new UnityEngine.Vector3(0,0,0);
+    private UnityEngine.Vector3 direction = new UnityEngine.Vector3(0,0,0);
     private UnityEngine.Vector3 original_mouse_Posi = new UnityEngine.Vector3(0,0,0);
     public Transform center;
     public GameObject cursor;
@@ -71,18 +70,22 @@ public class PlayerMovement : MonoBehaviour
         cursor.SetActive(true);
         cursor.transform.position = original_mouse_Posi;
     }
+
     private void SlingShotTrajectory() {
         UnityEngine.Vector3 current_mousePos = GetMousePos();
         UnityEngine.Vector3 original_Posi = original_mouse_Posi; // Get the player's position
-        float length = 0;
         // Calculate the direction vector from the player to the click position
-        UnityEngine.Vector3 direction = current_mousePos - original_Posi;
-
+        //BIG due to how the game is set up Z = Y in the code (OK)
+        //dont worry about whats happening here (ask rafay)
+        direction = current_mousePos - original_Posi;
+        direction.z = direction.y;
+        direction.y = 0.5f;
         // The length of the vector is the distance between the player and the click position
-        length = direction.magnitude;
-        if (length > maxDragLength)
+        float length = direction.magnitude;
+        Debug.Log(direction);
+        if (length > maxDragLength){
             length = maxDragLength;
-        else if (length<0.25){
+        } else if (length <0.25){
             return;
         }
         // Normalize the direction vector to get a unit vector and scale it by the distance
@@ -91,32 +94,38 @@ public class PlayerMovement : MonoBehaviour
             float var = length / maxDragLength;
             if (var >= 0f && var < 0.33f && ArrowMat.color != Color.yellow){
                 ArrowMat.color = Color.yellow;
-                length = maxDragLength * 0.25f;
                 TweenArrow();
             } else if (var >= 0.33f && var < 0.66f && ArrowMat.color != Color.blue){
                 ArrowMat.color = Color.blue;
-                length = maxDragLength * 0.625f;
                 TweenArrow();
             } else if (var >= 0.66f && var <=1f && ArrowMat.color != Color.red){
                 ArrowMat.color = Color.red;
-                length = maxDragLength * 1f;
                 TweenArrow();
             }
         }
-        
-        arrowVector = direction.normalized * length * -1;
-        transform.LookAt(center.position + arrowVector);
+
+        transform.LookAt((direction) * -1);
         AimArrow();
 
     }
 
     private void SlingShotAction() {
-        rigidbody.AddForce(arrowVector * moveMultipler, ForceMode.Impulse);
+        float var = direction.magnitude/maxDragLength;
+
+        if (var >= 0f && var < 0.33f)
+            var = maxDragLength*0.33f;
+        else if (var >= 0.33f && var < 0.66f)
+            var = maxDragLength*0.66f;
+        else if (var >= 0.66f)
+            var = maxDragLength;
+        
+        Vector3 arrowVector = direction.normalized * var;
+        rigidbody.AddForce(arrowVector * moveMultipler * -1, ForceMode.Impulse);
         moving = false;
         Arrow.SetActive(false);
         Time.timeScale = 1;
         ArrowMat.color = Color.white;
-        _particleController.TriggerParticle(arrowVector.normalized);
+        _particleController.TriggerParticle(direction.normalized);
         cursor.SetActive(false);
     }
 
@@ -151,17 +160,9 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private UnityEngine.Vector3 GetMousePos() {
-        UnityEngine.Vector3 mousePosition = Input.mousePosition; // Get the mouse position in screen coordinates
-        Ray ray = Camera.main.ScreenPointToRay(mousePosition); // Convert screen coordinates to a ray
-        UnityEngine.Vector3 mouse_Posi = new Vector3(0,0,0);
-        RaycastHit hit;
-        
-        if (Physics.Raycast(ray, out hit)) {
-            mouse_Posi = hit.point; // Get the world position of the mouse click
-            mouse_Posi.y = center.position.y;
-        }
+        UnityEngine.Vector3 mousePosition = Input.mousePosition;
 
-        return mouse_Posi;
+        return mousePosition;
     }
 
     void AimArrow() {
