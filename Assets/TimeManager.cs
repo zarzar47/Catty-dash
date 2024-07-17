@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class TimeManager: MonoBehaviour
 {
-    public float targetTime = 0.0f;
+    public static float targetTime = 0.0f;
     public bool flag = false;
     public GameObject player; 
     void Update(){
