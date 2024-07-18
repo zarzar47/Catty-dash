@@ -7,9 +7,20 @@ public class ParticleController : MonoBehaviour
     // Start is called before the first frame update
     public bool Burst = false;
     public new ParticleSystem particleSystem;
-    public void TriggerParticle(Vector2 direction){
-        particleSystem.transform.position = transform.position;
+    private ParticleSystemRenderer particleSystemRenderer;
+    [SerializeField] Mesh[] particle_meshes = new Mesh[3];
+    private void Awake() {
+        particleSystemRenderer = particleSystem.GetComponent<ParticleSystemRenderer>();    
+    }
+    private void TriggerParticle(Vector2 direction, Vector3 location, int meshNum){
+        particleSystemRenderer.mesh = particle_meshes[meshNum];
+        particleSystem.transform.position = location;
         particleSystem.transform.LookAt(direction);
         particleSystem.Play();
+    }
+
+    public void TriggerParticle(Vector2 direction, Vector3 location, int meshNum, float size){
+        particleSystemRenderer.maxParticleSize = size;
+        TriggerParticle(direction, location, meshNum);
     }
 }

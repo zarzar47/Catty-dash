@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -25,6 +26,7 @@ public class PlayerMovement : MonoBehaviour
     private Material ArrowMat;
     private Animator arrowAnim;
     private ParticleController _particleController;
+    private float length = 0;
     void Start()
     {
         Arrow.SetActive(false);
@@ -81,11 +83,11 @@ public class PlayerMovement : MonoBehaviour
         direction.z = direction.y;
         direction.y = 0.5f;
         // The length of the vector is the distance between the player and the click position
-        float length = direction.magnitude;
-        Debug.Log(direction);
+        length = direction.magnitude;
         if (length > maxDragLength){
             length = maxDragLength;
         } else if (length <0.25){
+            length = 0;
             return;
         }
         // Normalize the direction vector to get a unit vector and scale it by the distance
@@ -104,28 +106,27 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        transform.LookAt((direction) * -1);
+        LookTowards(direction * -1);
         AimArrow();
 
     }
 
     private void SlingShotAction() {
-        float var = direction.magnitude/maxDragLength;
+        float var = length / maxDragLength;
 
         if (var >= 0f && var < 0.33f)
-            var = maxDragLength*0.33f;
+            var = 0.33f;
         else if (var >= 0.33f && var < 0.66f)
-            var = maxDragLength*0.66f;
+            var = 0.66f;
         else if (var >= 0.66f)
-            var = maxDragLength;
+            var = 1f;
         
-        Vector3 arrowVector = direction.normalized * var;
-        rigidbody.AddForce(arrowVector * moveMultipler * -1, ForceMode.Impulse);
+        rigidbody.AddForce(direction.normalized * (moveMultipler * var) * -1, ForceMode.Impulse);
         moving = false;
         Arrow.SetActive(false);
         Time.timeScale = 1;
         ArrowMat.color = Color.white;
-        _particleController.TriggerParticle(direction.normalized);
+        _particleController.TriggerParticle(direction.normalized, center.position, 0, 1f);
         cursor.SetActive(false);
     }
 
@@ -142,7 +143,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 reflectDir = Vector3.Reflect (incomingVelocity , collisionNormal); // reflecting the velocity of the player along the normal vector's plane
         transform.rotation.SetFromToRotation(rigidbody.velocity.normalized, reflectDir); // rotating the player to the new vector's direction
         reflectDir *= 0.8f;
-
+        _particleController.TriggerParticle(reflectDir * -1, collider.GetContact(0).point, 1, 0.25f);
         //application of the force
         rigidbody.AddForce(reflectDir, ForceMode.Impulse);
     }
@@ -175,4 +176,9 @@ public class PlayerMovement : MonoBehaviour
         arrowAnim.Play("ArrowShake",0);
     }
 
+    void LookTowards(Vector3 target){
+        Vector3 direction = target - transform.position;
+        direction.y = this.transform.position.y;
+        transform.rotation = Quaternion.LookRotation(direction);
+    }
 }
