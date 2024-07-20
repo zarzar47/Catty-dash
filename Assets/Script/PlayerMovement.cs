@@ -13,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     public GameObject Arrow;
     [SerializeField, Range(0,1)]private float timeSlowDown = 1;
     public float maxSpeed = 10f;
+    public float minSpeed = 7f;
     public float moveMultipler = 5f;
     public float maxDragLength = 6.5f;
     private bool aiming = false;
@@ -27,8 +28,13 @@ public class PlayerMovement : MonoBehaviour
     private Animator arrowAnim;
     private ParticleController _particleController;
     private float length = 0;
+    private bool kill = false; //bool for checking if the player is fast enough to kill an enemy
+    private LevelManager levelManager;
     void Start()
     {
+        
+        GameObject levelManagerObj = GameObject.FindGameObjectWithTag("LevelManager");
+        levelManager = levelManagerObj.GetComponent<LevelManager>();
         Arrow.SetActive(false);
         rigidbody = GetComponent<Rigidbody>();
         ArrowMat = Arrow.GetComponentInChildren<MeshRenderer>().materials[0];
@@ -133,6 +139,12 @@ public class PlayerMovement : MonoBehaviour
     private void OnCollisionEnter(Collision other) {
          if (other.gameObject.tag == "Bouceable"){
             ApplyReflection(other);
+         } else if (other.gameObject.tag == "Enemy"){
+            Debug.Log("Touched enemy Speed: "+rigidbody.velocity.magnitude+ " Kill: "+kill);
+            if (kill && !other.gameObject.GetComponent<EnemyAI>().isEnraged()){
+                levelManager.UpdateScore(10);
+                Destroy(other.gameObject);
+            }
          }
     }
 
@@ -152,11 +164,17 @@ public class PlayerMovement : MonoBehaviour
     {
         // Calculate the current speed of the Rigidbody
         float currentSpeed = rigidbody.velocity.magnitude;
-
+        
         // If the current speed exceeds the maximum speed, clamp it
         if (currentSpeed > maxSpeed) {
             // Normalize the velocity vector and scale it to the maximum speed
             rigidbody.velocity = rigidbody.velocity.normalized * maxSpeed;
+        }
+
+        if (currentSpeed <=minSpeed){
+            kill = false;
+        } else {
+            kill = true;
         }
     }
 

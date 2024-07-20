@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class EnemyAI : MonoBehaviour
 {
@@ -41,6 +42,8 @@ public class EnemyAI : MonoBehaviour
             else if (enraged)
             {
                 Debug.Log("Player found");
+                Destroy(other.gameObject);
+                SceneManager.LoadScene("LevelFailed");
                 //LookTowards(other.transform.position);
                 //transform.position = Vector3.MoveTowards(transform.position, other.transform.position, speed * Time.deltaTime);
             }
@@ -66,5 +69,9 @@ public class EnemyAI : MonoBehaviour
         {
             transform.LookAt(direction);
         }
+    }
+
+    public bool isEnraged(){
+        return enraged;
     }
 }
