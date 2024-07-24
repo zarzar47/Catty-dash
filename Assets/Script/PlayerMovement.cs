@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
@@ -13,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
     public GameObject Arrow;
     [SerializeField, Range(0,1)]private float timeSlowDown = 1;
     public float maxSpeed = 10f;
-    public float minSpeed = 7f;
+    public float minSpeedToKill = 7f;
     public float moveMultipler = 5f;
     public float maxDragLength = 6.5f;
     private bool aiming = false;
@@ -28,11 +29,11 @@ public class PlayerMovement : MonoBehaviour
     private Animator arrowAnim;
     private ParticleController _particleController;
     private float length = 0;
-    private bool kill = false; //bool for checking if the player is fast enough to kill an enemy
     private LevelManager levelManager;
+    private AudioManager audioSource;
     void Start()
     {
-        
+        audioSource = GetComponentInChildren<AudioManager>();
         GameObject levelManagerObj = GameObject.FindGameObjectWithTag("LevelManager");
         levelManager = levelManagerObj.GetComponent<LevelManager>();
         Arrow.SetActive(false);
@@ -134,16 +135,23 @@ public class PlayerMovement : MonoBehaviour
         ArrowMat.color = Color.white;
         _particleController.TriggerParticle(direction.normalized, center.position, 0, 1f);
         cursor.SetActive(false);
+
+
+        audioSource.playClip(0);//0 is woosh
     }
 
     private void OnCollisionEnter(Collision other) {
          if (other.gameObject.tag == "Bouceable"){
             ApplyReflection(other);
          } else if (other.gameObject.tag == "Enemy"){
-            Debug.Log("Touched enemy Speed: "+rigidbody.velocity.magnitude+ " Kill: "+kill);
-            if (kill && !other.gameObject.GetComponent<EnemyAI>().isEnraged()){
-                levelManager.UpdateScore(10);
-                Destroy(other.gameObject);
+            if (rigidbody.velocity.magnitude >= minSpeedToKill){
+                if (!other.gameObject.GetComponent<EnemyAI>().isEnraged()) {
+                    levelManager.UpdateScore(10);
+                    audioSource.playClip(1); // 1 is slash
+                    Destroy(other.gameObject);
+                }
+            } else {
+                ApplyReflection(other);
             }
          }
     }
@@ -169,12 +177,6 @@ public class PlayerMovement : MonoBehaviour
         if (currentSpeed > maxSpeed) {
             // Normalize the velocity vector and scale it to the maximum speed
             rigidbody.velocity = rigidbody.velocity.normalized * maxSpeed;
-        }
-
-        if (currentSpeed <=minSpeed){
-            kill = false;
-        } else {
-            kill = true;
         }
     }
 

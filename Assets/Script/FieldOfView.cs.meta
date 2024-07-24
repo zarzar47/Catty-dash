@@ -1,10 +1,9 @@
 fileFormatVersion: 2
-guid: 96f628b4b8daccc4a8a1c8f283cda51f
+guid: d84e24280b1fb664d972139f8350a520
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences:
-  - pfFieldOfView: {fileID: 5457885800636318302, guid: de80b961ee1859546af718e30c7748bb, type: 3}
+  defaultReferences: []
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
