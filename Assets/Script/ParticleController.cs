@@ -7,9 +7,13 @@ public class ParticleController : MonoBehaviour
     // Start is called before the first frame update
     public bool Burst = false;
     public new ParticleSystem particleSystem;
+    public GameObject particleSystemPrefab;
     private ParticleSystemRenderer particleSystemRenderer;
     [SerializeField] Mesh[] particle_meshes = new Mesh[3];
     private void Awake() {
+        if (particleSystem == null){
+            particleSystem = Instantiate(particleSystemPrefab, transform.position, Quaternion.identity).GetComponent<ParticleSystem>();
+        }
         particleSystemRenderer = particleSystem.GetComponent<ParticleSystemRenderer>();    
     }
     private void TriggerParticle(Vector2 direction, Vector3 location, int meshNum){

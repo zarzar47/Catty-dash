@@ -7,7 +7,7 @@ public class LevelLoader : MonoBehaviour
 {
     public static int levelComp = 0;
     private static int currentLevel = 0;
-    private static int max_levels = 2;
+    private static int max_levels = 1;
     public void loadLevel(int lvlNum){
         if (lvlNum <=max_levels){
             SceneManager.LoadScene("Level "+lvlNum);
