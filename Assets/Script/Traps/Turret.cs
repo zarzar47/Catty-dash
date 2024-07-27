@@ -12,18 +12,18 @@ public class Turret : MonoBehaviour
     public GameObject bullet;
     public float waitTime = 2f;
     private float passedTime = 0f;
+    public float bulletSpeed = 5f;
 
 
     void OnTriggerStay(Collider other)
     {
         passedTime += Time.deltaTime;
+        //Debug.Log("hit");
         if(other.tag == "Player"){
-            Debug.Log("hit");
-            Vector3 difference = (player.transform.position - turret.transform.position);
+            Vector3 difference = player.transform.position - turret.transform.position;
             Quaternion lookRotation = Quaternion.LookRotation(difference);
-            Debug.DrawRay(gun.transform.position, difference, Color.yellow);
-            turret.transform.LookAt(difference);
-            //turret.transform.rotation = Quaternion.Slerp(turret.transform.rotation, lookRotation, Time.deltaTime * rotateSpeed);
+            //turret.transform.LookAt(difference);
+            turret.transform.rotation = Quaternion.Slerp(turret.transform.rotation, lookRotation, Time.deltaTime * rotateSpeed);
             if (passedTime >= waitTime){
                 CreateBullet();
                 passedTime = 0;
@@ -37,12 +37,6 @@ public class Turret : MonoBehaviour
 
     void CreateBullet(){
         GameObject shell = Instantiate(bullet, gun.transform.position, gun.transform.rotation);
-        shell.GetComponent<Rigidbody>().velocity = gun.transform.forward;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        shell.GetComponent<Rigidbody>().velocity = gun.transform.forward * bulletSpeed;
     }
 }

@@ -6,6 +6,7 @@ public class ArrowTrap : MonoBehaviour
 {
     public Transform[] arrows;
     public GameObject arrow;
+    public float arrowSpeed = 5f;
 
     private void OnTriggerEnter(Collider other) {
         if (other.tag == "Player"){
@@ -17,7 +18,8 @@ public class ArrowTrap : MonoBehaviour
         for (int i = 0; i < arrows.Length; i++){
             float random = Random.Range(0, 10);
             if(random >= 2){
-                Instantiate(arrow, arrows[i].position, arrows[i].rotation);
+                GameObject arro = Instantiate(arrow, arrows[i].position, arrows[i].rotation);
+                arro.GetComponent<Rigidbody>().velocity = arrows[i].transform.forward * arrowSpeed;
             }
         }
     }
