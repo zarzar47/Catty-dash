@@ -184,6 +184,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 0.05
   TimeToEnrage: 1
+  viewDistance: 0
+  FOV: 90
+  PlayerLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  pfFieldOfView: {fileID: 5457885800636318302, guid: de80b961ee1859546af718e30c7748bb, type: 3}
 --- !u!54 &8082155399251219267
 Rigidbody:
   m_ObjectHideFlags: 0

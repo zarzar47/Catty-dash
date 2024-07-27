@@ -11,59 +11,44 @@ using UnityEngine.UIElements;
 public class PlayerMovement : MonoBehaviour
 {
     // Start is called before the first frame update
-    public GameObject Arrow;
+    private GameObject Arrow;
     [SerializeField, Range(0,1)]private float timeSlowDown = 1;
     public float maxSpeed = 10f;
+    public GameObject arrowPrefab;
     public float minSpeedToKill = 7f;
     public float moveMultipler = 5f;
     public float maxDragLength = 6.5f;
     private bool aiming = false;
     private bool moving = false;
     private UnityEngine.Vector3 direction = new UnityEngine.Vector3(0,0,0);
-    private UnityEngine.Vector3 original_mouse_Posi = new UnityEngine.Vector3(0,0,0);
-    public Transform center;
-    public GameObject cursor;
+    [HideInInspector] public Transform center;
     private new Rigidbody rigidbody;
     private Vector3 old_velo = new Vector3(0,0,0);
     private Material ArrowMat;
-    private Animator arrowAnim;
     private ParticleController _particleController;
     private float length = 0;
     private LevelManager levelManager;
     private AudioManager audioSource;
+    private Vector3 mousePos;
     void Start()
     {
+        center = this.transform;
         audioSource = GetComponentInChildren<AudioManager>();
         GameObject levelManagerObj = GameObject.FindGameObjectWithTag("LevelManager");
         levelManager = levelManagerObj.GetComponent<LevelManager>();
-        Arrow.SetActive(false);
         rigidbody = GetComponent<Rigidbody>();
-        ArrowMat = Arrow.GetComponentInChildren<MeshRenderer>().materials[0];
-        arrowAnim = Arrow.gameObject.GetComponentInChildren<Animator>();
+        ArrowMat = arrowPrefab.GetComponentInChildren<MeshRenderer>().sharedMaterial;
         _particleController = GetComponentInChildren<ParticleController>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        //if (Input.touchCount > 0){
-            //Touch touch = Input.GetTouch(0);
         if (Input.GetMouseButtonDown(0)){
-            SlingShotInitialPos();
-        } else if ( /*(touch.phase == TouchPhase.Moved) ||*/ Input.GetMouseButton(0)){
-            Debug.Log("aiming");
-            aiming = true;
-            moving = false;
-        } else if ( /*touch.phase == TouchPhase.Ended ||*/ Input.GetMouseButtonUp(0)){
-            Debug.Log("Moving");
-            aiming = false;
-            moving = true;
-        }
-        //}
-
-        if (aiming == true){
-            SlingShotTrajectory();
-        } else if (moving == true && aiming == false){
+            mousePos = GetMousePos();
+            Time.timeScale = timeSlowDown;
+        } else if (Input.GetMouseButton(0)){
+            SlingShotTrajectory(mousePos);
+        } else if (Input.GetMouseButtonUp(0)){
             SlingShotAction();
         }
     }
@@ -73,23 +58,18 @@ public class PlayerMovement : MonoBehaviour
         ClampVelocity();
     }
 
-    private void SlingShotInitialPos(){
-        original_mouse_Posi = GetMousePos();
-        Time.timeScale = timeSlowDown;
-        cursor.SetActive(true);
-        cursor.transform.position = original_mouse_Posi;
-    }
 
-    private void SlingShotTrajectory() {
+    private void SlingShotTrajectory(Vector3 mousePos) {
+        if (Arrow == null){
+            Arrow = Instantiate(arrowPrefab, transform.position, Quaternion.identity, transform);
+        } else if (Arrow.activeSelf == false){
+            Arrow.SetActive(true);
+        }
         UnityEngine.Vector3 current_mousePos = GetMousePos();
-        UnityEngine.Vector3 original_Posi = original_mouse_Posi; // Get the player's position
-        // Calculate the direction vector from the player to the click position
-        //BIG due to how the game is set up Z = Y in the code (OK)
-        //dont worry about whats happening here (ask rafay)
+        UnityEngine.Vector3 original_Posi = mousePos;
         direction = current_mousePos - original_Posi;
         direction.z = direction.y;
         direction.y = 0.5f;
-        // The length of the vector is the distance between the player and the click position
         length = direction.magnitude;
         if (length > maxDragLength){
             length = maxDragLength;
@@ -97,19 +77,15 @@ public class PlayerMovement : MonoBehaviour
             length = 0;
             return;
         }
-        // Normalize the direction vector to get a unit vector and scale it by the distance
 
         if (Arrow.activeSelf){
             float var = length / maxDragLength;
             if (var >= 0f && var < 0.33f && ArrowMat.color != Color.yellow){
                 ArrowMat.color = Color.yellow;
-                TweenArrow();
             } else if (var >= 0.33f && var < 0.66f && ArrowMat.color != Color.blue){
                 ArrowMat.color = Color.blue;
-                TweenArrow();
             } else if (var >= 0.66f && var <=1f && ArrowMat.color != Color.red){
                 ArrowMat.color = Color.red;
-                TweenArrow();
             }
         }
 
@@ -119,6 +95,8 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void SlingShotAction() {
+        
+        rigidbody.velocity = Vector3.zero;
         float var = length / maxDragLength;
 
         if (var >= 0f && var < 0.33f)
@@ -128,14 +106,12 @@ public class PlayerMovement : MonoBehaviour
         else if (var >= 0.66f)
             var = 1f;
         
-        rigidbody.AddForce(direction.normalized * (moveMultipler * var) * -1, ForceMode.Impulse);
+        rigidbody.AddForce(transform.forward * (moveMultipler * var), ForceMode.Impulse);
         moving = false;
         Arrow.SetActive(false);
         Time.timeScale = 1;
         ArrowMat.color = Color.white;
         _particleController.TriggerParticle(direction.normalized, center.position, 0, 1f);
-        cursor.SetActive(false);
-
 
         audioSource.playClip(0);//0 is woosh
     }
@@ -156,26 +132,25 @@ public class PlayerMovement : MonoBehaviour
          }
     }
 
-    void ApplyReflection(Collision collider) {
+    
+    private void ApplyReflection(Collision collider) {
         //getting the normal vector from the contact on the object (not the player's point of contact)
         Vector3 collisionNormal = collider.GetContact(0).normal;
         Vector3 incomingVelocity = old_velo;
-        Vector3 reflectDir = Vector3.Reflect (incomingVelocity , collisionNormal); // reflecting the velocity of the player along the normal vector's plane
+        Vector3 reflectDir = Vector3.Reflect(incomingVelocity , collisionNormal); // reflecting the velocity of the player along the normal vector's plane
         transform.rotation.SetFromToRotation(rigidbody.velocity.normalized, reflectDir); // rotating the player to the new vector's direction
         reflectDir *= 0.8f;
         _particleController.TriggerParticle(reflectDir * -1, collider.GetContact(0).point, 1, 0.25f);
         //application of the force
         rigidbody.AddForce(reflectDir, ForceMode.Impulse);
+        transform.LookAt(reflectDir);
     }
 
     void ClampVelocity()
     {
-        // Calculate the current speed of the Rigidbody
         float currentSpeed = rigidbody.velocity.magnitude;
         
-        // If the current speed exceeds the maximum speed, clamp it
         if (currentSpeed > maxSpeed) {
-            // Normalize the velocity vector and scale it to the maximum speed
             rigidbody.velocity = rigidbody.velocity.normalized * maxSpeed;
         }
     }
@@ -190,10 +165,6 @@ public class PlayerMovement : MonoBehaviour
         if (Arrow.activeSelf == false){
             Arrow.SetActive(true);
         }
-    }
-
-    void TweenArrow(){
-        arrowAnim.Play("ArrowShake",0);
     }
 
     void LookTowards(Vector3 target){
