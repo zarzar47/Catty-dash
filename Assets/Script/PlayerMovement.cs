@@ -73,7 +73,7 @@ public class PlayerMovement : MonoBehaviour
         length = direction.magnitude;
         if (length > maxDragLength){
             length = maxDragLength;
-        } else if (length <0.25){
+        } else if (length < maxDragLength * 0.1f){
             length = 0;
             return;
         }
@@ -95,7 +95,8 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void SlingShotAction() {
-        
+        if (length == 0)
+            return;
         rigidbody.velocity = Vector3.zero;
         float var = length / maxDragLength;
 
