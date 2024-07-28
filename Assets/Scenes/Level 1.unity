@@ -170,6 +170,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3726538292858968220, guid: 55b437397792f824da548c1b063d2c22, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 5a4944828ebacb549ad03055efeb8b40, type: 2}
     - target: {fileID: 6996205165362217013, guid: 55b437397792f824da548c1b063d2c22, type: 3}
       propertyPath: m_Name
       value: Death
@@ -1024,7 +1028,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8cfadcb093c0a614da7a2640af6bc503, type: 2}
+  - {fileID: 2100000, guid: 51bf4d51d8e3c444eb413b78e2dbba4f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

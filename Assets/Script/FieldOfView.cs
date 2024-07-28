@@ -11,10 +11,13 @@ public class FieldOfView : MonoBehaviour
     public float viewDistance = 50f;
     private Mesh mesh;
     public LayerMask layerMask;
+    private Transform aggroHead;
     // Start is called before the first frame update
     void Start()
     {
         mesh  = new Mesh();
+        aggroHead = transform.GetChild(0).transform;
+        aggroHead.GetComponentInChildren<MeshFilter>().mesh = mesh;
         GetComponent<MeshFilter>().mesh = mesh;
     }
 
@@ -92,6 +95,28 @@ public class FieldOfView : MonoBehaviour
 
     public void SetLayer(LayerMask layerMask){
         this.layerMask = layerMask;
+    }
+
+    public void setAggro(float scale){
+        if (aggroHead == null) return;
+        Vector3 newscale = aggroHead.localScale;
+        newscale.x = scale;
+        newscale.z = scale;
+        aggroHead.localScale = newscale;
+    }
+
+    public float getAggro(){
+        if (aggroHead == null) return 0.0f;
+        return aggroHead.localScale.x;
+    }
+
+    public void decreaseAggro(float amount){
+        float aggro = getAggro();
+        setAggro(aggro - amount);
+    }
+
+    public void addAggro(float amount){
+        decreaseAggro(-1*amount);
     }
 
 }

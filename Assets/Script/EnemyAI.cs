@@ -13,8 +13,6 @@ public class EnemyAI : MonoBehaviour
     public float viewDistance = 0;
     public float FOV = 90f;
     private bool enraged = false;
-    private float meter = 0;
-    private Material Enemy_material;
     public LayerMask PlayerLayer;
     [SerializeField] private GameObject pfFieldOfView;
     private GameObject objFieldOfView;
@@ -31,7 +29,6 @@ public class EnemyAI : MonoBehaviour
         particleSystem = GetComponentInChildren<ParticleSystem>();
         animator = GetComponent<Animator>();
         playerObj = FindObjectOfType<PlayerMovement>();
-        Enemy_material = GetComponentInParent<MeshRenderer>().material;
         objFieldOfView = Instantiate(pfFieldOfView, null);
         fieldOfView = objFieldOfView.GetComponent<FieldOfView>();
         
@@ -68,6 +65,9 @@ public class EnemyAI : MonoBehaviour
     }
 
     public void playDeath() {
+        if (!playerNotfound){
+            return;
+        }
         Destroy(objFieldOfView);
         particleSystem.Play();
         animator.SetTrigger("dead");
@@ -78,21 +78,23 @@ public class EnemyAI : MonoBehaviour
         if (!playerNotfound || dead)
             return;
         if (PlayerInArea()){
-            Debug.Log("Player Detected");
             RaycastHit hit;
             Vector3 pos = playerObj.transform.position - transform.position;
             
             if (Vector3.Angle(-1 * transform.forward,pos) < FOV/2){
                 if (Physics.Raycast(transform.position, pos.normalized , out hit, viewDistance)){
                     if (hit.collider.tag == "Player"){
-                        Debug.Log("RayHit");
-                        meter += Time.deltaTime * 2 / TimeToEnrage;
-                        Enemy_material.color = Color.Lerp(Color.white, Color.red, meter);
-                        if (Enemy_material.color == Color.red){
+                        float meter = Time.deltaTime / TimeToEnrage;
+                        fieldOfView.addAggro(meter);
+                        if (fieldOfView.getAggro() >= 1){
                             PlayerFound();
                         }
                     }
                 }
+            }
+        } else {
+            if (fieldOfView.getAggro() > 0){
+                fieldOfView.decreaseAggro(0.001f);
             }
         }
     }
