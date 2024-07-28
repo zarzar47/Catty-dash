@@ -20,12 +20,16 @@ public class EnemyAI : MonoBehaviour
     private GameObject objFieldOfView;
     private FieldOfView fieldOfView;
     private AudioSource soundManager;
-    private AudioClip huh;
+    private Animator animator;
     private PlayerMovement playerObj;
     private bool playerNotfound = true;
+    private new ParticleSystem particleSystem;
+    private bool dead = false;
     // Start is called before the first frame update
     void Start()
     {
+        particleSystem = GetComponentInChildren<ParticleSystem>();
+        animator = GetComponent<Animator>();
         playerObj = FindObjectOfType<PlayerMovement>();
         Enemy_material = GetComponentInParent<MeshRenderer>().material;
         objFieldOfView = Instantiate(pfFieldOfView, null);
@@ -46,66 +50,32 @@ public class EnemyAI : MonoBehaviour
         
     }
 
-    // private void OnTriggerEnter(Collider other)
-    // {
-    //     if (other.gameObject.CompareTag("Player") && enraged)
-    //     {
-    //     }
-    // }
-
-    // private void OnTriggerStay(Collider other)
-    // {
-    //     if (other.gameObject.CompareTag("Player"))
-    //     {
-    //         if (!enraged)
-    //         {
-    //             meter += Time.deltaTime * 2;
-    //             Enemy_material.color = Color.Lerp(Color.white, Color.red, meter);
-    //             if (meter > TimeToEnrage)
-    //             {
-    //                 enraged = true;
-    //             }
-    //         }
-    //         else if (enraged)
-    //         {
-                
-    //             //LookTowards(other.transform.position);
-    //             //transform.position = Vector3.MoveTowards(transform.position, other.transform.position, speed * Time.deltaTime);
-    //         }
-    //     }
-    // }
 
     private void PlayerFound(){
         Debug.Log("Player found");
         soundManager.Play();
         playerNotfound = false;
+        animator.SetTrigger("PlayerCaught");
         Invoke("LevelFailLoad", soundManager.clip.length);
     }
     private void LevelFailLoad(){
         SceneManager.LoadScene("LevelFailed");
     }
 
-    // private void OnTriggerExit(Collider other)
-    // {
-    //     if (other.gameObject.CompareTag("Player"))
-    //     {
-    //         Enemy_material.color = Color.white;
-    //         meter = 0;
-    //         enraged = false;
-    //     }
-    // }
-
 
     public bool isEnraged(){
         return enraged;
     }
 
-    private void OnDestroy() {
+    public void playDeath() {
         Destroy(objFieldOfView);
+        particleSystem.Play();
+        animator.SetTrigger("dead");
+        dead = true;
     }
 
     public void DetectPlayer(){
-        if (!playerNotfound)
+        if (!playerNotfound || dead)
             return;
         if (PlayerInArea()){
             Debug.Log("Player Detected");

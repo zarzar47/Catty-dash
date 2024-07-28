@@ -18,8 +18,6 @@ public class PlayerMovement : MonoBehaviour
     public float minSpeedToKill = 7f;
     public float moveMultipler = 5f;
     public float maxDragLength = 6.5f;
-    private bool aiming = false;
-    private bool moving = false;
     private UnityEngine.Vector3 direction = new UnityEngine.Vector3(0,0,0);
     [HideInInspector] public Transform center;
     private new Rigidbody rigidbody;
@@ -108,7 +106,6 @@ public class PlayerMovement : MonoBehaviour
             var = 1f;
         
         rigidbody.AddForce(transform.forward * (moveMultipler * var), ForceMode.Impulse);
-        moving = false;
         Arrow.SetActive(false);
         Time.timeScale = 1;
         ArrowMat.color = Color.white;
@@ -122,10 +119,11 @@ public class PlayerMovement : MonoBehaviour
             ApplyReflection(other);
          } else if (other.gameObject.tag == "Enemy"){
             if (rigidbody.velocity.magnitude >= minSpeedToKill){
-                if (!other.gameObject.GetComponent<EnemyAI>().isEnraged()) {
+                EnemyAI ai = other.gameObject.GetComponent<EnemyAI>();
+                if (!ai.isEnraged()) {
                     levelManager.UpdateScore(10);
                     audioSource.playClip(1); // 1 is slash
-                    Destroy(other.gameObject);
+                    ai.playDeath();
                 }
             } else {
                 ApplyReflection(other);
@@ -141,7 +139,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 reflectDir = Vector3.Reflect(incomingVelocity , collisionNormal); // reflecting the velocity of the player along the normal vector's plane
         transform.rotation.SetFromToRotation(rigidbody.velocity.normalized, reflectDir); // rotating the player to the new vector's direction
         reflectDir *= 0.8f;
-        _particleController.TriggerParticle(reflectDir * -1, collider.GetContact(0).point, 1, 0.25f);
+        _particleController.TriggerParticle(reflectDir * -1, collider.GetContact(0).point, 1, 2f);
         //application of the force
         rigidbody.AddForce(reflectDir, ForceMode.Impulse);
         transform.LookAt(reflectDir);

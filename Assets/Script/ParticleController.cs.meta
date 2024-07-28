@@ -5,7 +5,7 @@ MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - particleSystem: {instanceID: 0}
-  - particleSystemPrefab: {fileID: 5605036265815928333, guid: 14ea26104a2cc2042a655a6ce097e02f, type: 3}
+  - particleSystemPrefab: {fileID: 1306692335478391438, guid: 35f77343bbd9af848b0b09b6d90efe14, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
