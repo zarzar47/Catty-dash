@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
@@ -28,6 +29,14 @@ public class PlayerMovement : MonoBehaviour
     private LevelManager levelManager;
     private AudioManager audioSource;
     private Vector3 mousePos;
+    public bool invisible = false;
+    public float invisibility_Duration = 2f;
+    public float invisibility_Active_Time = 0f;
+    private float alpha = 0.3f;
+    private float original_alpha;
+    public float after_Image_Time = 0.2f; //Time to spawn an afterimage
+    public float time_passed_wo_afterImage = 0f;
+    private PlayerManager playerManager;
     void Start()
     {
         center = this.transform;
@@ -37,13 +46,36 @@ public class PlayerMovement : MonoBehaviour
         rigidbody = GetComponent<Rigidbody>();
         ArrowMat = arrowPrefab.GetComponentInChildren<MeshRenderer>().sharedMaterial;
         _particleController = GetComponentInChildren<ParticleController>();
+        playerManager = PlayerManager.Instance;
     }
 
     void Update()
     {
+        if(GetComponent<Rigidbody>().velocity.sqrMagnitude > 0.2f){
+            time_passed_wo_afterImage += Time.deltaTime;
+            if (time_passed_wo_afterImage > after_Image_Time){
+                time_passed_wo_afterImage = 0f;
+                //AfterImagePool.Instance.GetFromPool();
+            }
+        }
+
+        if(invisible){
+            invisibility_Active_Time += Time.deltaTime;
+            if (invisibility_Active_Time > invisibility_Duration){
+                invisible = false;
+            }
+            //implement something to make player translucent
+        }
+        else{
+            //player not translucent
+        }
+
         if (Input.GetMouseButtonDown(0)){
             mousePos = GetMousePos();
-            Time.timeScale = timeSlowDown;
+            if (playerManager.timeSlowDownUnlocked) {
+                Debug.Log("Slowed");
+                Time.timeScale = timeSlowDown;
+            }
         } else if (Input.GetMouseButton(0)){
             SlingShotTrajectory(mousePos);
         } else if (Input.GetMouseButtonUp(0)){

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.SceneManagement;
 
 public class EnemyAI : MonoBehaviour
@@ -84,10 +85,13 @@ public class EnemyAI : MonoBehaviour
             if (Vector3.Angle(-1 * transform.forward,pos) < FOV/2){
                 if (Physics.Raycast(transform.position, pos.normalized , out hit, viewDistance)){
                     if (hit.collider.tag == "Player"){
-                        float meter = Time.deltaTime / TimeToEnrage;
-                        fieldOfView.addAggro(meter);
-                        if (fieldOfView.getAggro() >= 1){
-                            PlayerFound();
+                        // If player not invisible, then continue, otherwise dont
+                        if (!(hit.collider.gameObject.GetComponent<PlayerMovement>().invisible)) {
+                            float meter = Time.deltaTime / TimeToEnrage;
+                            fieldOfView.addAggro(meter);
+                            if (fieldOfView.getAggro() >= 1){
+                                PlayerFound();
+                            }
                         }
                     }
                 }
