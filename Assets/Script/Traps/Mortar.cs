@@ -14,40 +14,49 @@ public class Mortar : MonoBehaviour
 
     void Update()
     {
-        passedTime += Time.deltaTime;
+        if (!player.GetComponent<PlayerMovement>().invisible)
+        {
+            passedTime += Time.deltaTime;
 
-        Vector3 direction = (player.transform.position - this.transform.position).normalized;
-        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-        this.transform.rotation = Quaternion.Slerp(this.transform.rotation, lookRotation, Time.deltaTime * rotSpeed);
-        float? angle = RotateTurret();
+            Vector3 direction = (player.transform.position - this.transform.position).normalized;
+            Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+            this.transform.rotation = Quaternion.Slerp(this.transform.rotation, lookRotation, Time.deltaTime * rotSpeed);
+            float? angle = RotateTurret();
 
-        if (passedTime >= waitTime){
-            if (angle != null){
-                //Debug.Log("Not 0");
-                Shoot();
-                passedTime = 0;
-            }/*
+            if (passedTime >= waitTime)
+            {
+                if (angle != null)
+                {
+                    //Debug.Log("Not 0");
+                    Shoot();
+                    passedTime = 0;
+                }/*
             else{
                 this.transform.Translate(0, 0, moveSpeed * Time.deltaTime);
             }*/
+            }
         }
     }
 
-    void Shoot(){
+    void Shoot()
+    {
         //Debug.Log("hit");
         GameObject shot = Instantiate(shell, shoot.position, shoot.rotation);
         shot.GetComponent<Rigidbody>().velocity = speed * shoot.forward;
     }
 
-    float? RotateTurret(){
+    float? RotateTurret()
+    {
         float? angle = CalculateAngle(false);
-        if (angle != null){
+        if (angle != null)
+        {
             shoot.localEulerAngles = new Vector3(360f - (float)angle, 0f, 0f);
         }
         return angle;
     }
 
-    float? CalculateAngle(bool low){
+    float? CalculateAngle(bool low)
+    {
         Vector3 targetDir = player.transform.position - this.transform.position;
         float y = targetDir.y;
         targetDir.y = 0;
@@ -60,15 +69,16 @@ public class Mortar : MonoBehaviour
         //Debug.Log("y: " + y);
         //Debug.Log("underroot: " + underSqrRoot);
 
-        if (underSqrRoot >= 0f){
+        if (underSqrRoot >= 0f)
+        {
             float root = Mathf.Sqrt(underSqrRoot);
             float highAngle = sSqr + root;
             float lowAngle = sSqr - root;
 
             if (low)
-                return Mathf.Atan2(lowAngle, gravity*x) * Mathf.Rad2Deg;
+                return Mathf.Atan2(lowAngle, gravity * x) * Mathf.Rad2Deg;
             else
-                return Mathf.Atan2(highAngle, gravity*x) * Mathf.Rad2Deg;
+                return Mathf.Atan2(highAngle, gravity * x) * Mathf.Rad2Deg;
         }
         else
             return null;

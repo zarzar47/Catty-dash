@@ -8,7 +8,7 @@ public class LevelLoader : MonoBehaviour
 {
     public static int levelComp = 0;
     private static int currentLevel = 0;
-    private static int max_levels = 1;
+    private static int max_levels = 6;
     public float loading_time = 3f;
     private IEnumerator ColoadLevel(int lvlNum){
 

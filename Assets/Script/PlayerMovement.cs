@@ -29,9 +29,9 @@ public class PlayerMovement : MonoBehaviour
     private LevelManager levelManager;
     private AudioManager audioSource;
     private Vector3 mousePos;
-    // public bool invisible = false;
-    // public float invisibility_Duration = 2f;
-    // public float invisibility_Active_Time = 0f;
+     public bool invisible = false;
+     public float invisibilityDuration = 2f;
+     public float invisibility_Active_Time = 0f;
     private PlayerManager playerManager;
     void Start()
     {
@@ -48,14 +48,16 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
 
-        // if(invisible){
-        //     invisibility_Active_Time += Time.deltaTime;
-        //     if (invisibility_Active_Time > invisibility_Duration){
-        //         invisible = false;
-        //     }
-        // }
-        // else{
-        // }
+        if(invisible){
+            invisibility_Active_Time += Time.deltaTime;
+            if (invisibility_Active_Time > invisibilityDuration){
+                invisible = false;
+            }
+            //Add something to make the player translucent
+        }
+        else{
+            //Something that does'nt make the player translucent
+        }
 
         if (Input.GetMouseButtonDown(0)){
             mousePos = GetMousePos();

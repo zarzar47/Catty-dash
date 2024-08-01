@@ -15,8 +15,10 @@ public class Spike : MonoBehaviour
 
     private void OnTriggerEnter(Collider other) {
         if (other.tag == "Player"){
-            active = true;
-            trap.SetActive(true);
+            if (!other.GetComponent<PlayerMovement>().invisible){
+                active = true;
+                trap.SetActive(true);
+            }
         }
     }
     
