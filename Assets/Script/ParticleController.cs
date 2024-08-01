@@ -6,7 +6,7 @@ public class ParticleController : MonoBehaviour
 {
     // Start is called before the first frame update
     public bool Burst = false;
-    public new ParticleSystem particleSystem;
+    public ParticleSystem particleSystem;
     public GameObject particleSystemPrefab;
     private ParticleSystemRenderer particleSystemRenderer;
     [SerializeField] Mesh[] particle_meshes = new Mesh[3];

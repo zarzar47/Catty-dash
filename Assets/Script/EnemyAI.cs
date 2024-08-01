@@ -26,7 +26,6 @@ public class EnemyAI : MonoBehaviour
     private bool playerNotfound = true;
     private new ParticleSystem particleSystem;
     private bool dead = false;
-    public Transform center;
     // Start is called before the first frame update
     void Start()
     {
@@ -81,7 +80,8 @@ public class EnemyAI : MonoBehaviour
     }
 
     private void DestroyObj(){
-        particleSystem.Play();
+        if (particleSystem!=null)
+            particleSystem.Play();
         Destroy(this.transform.GetChild(0).gameObject);
         Destroy(this.gameObject, 3f);
 

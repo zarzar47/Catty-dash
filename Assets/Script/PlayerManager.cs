@@ -26,6 +26,10 @@ public class PlayerManager : MonoBehaviour
         SceneManager.LoadScene("LevelFailed");
     }
 
+    private void OnDestroy() {
+        Time.timeScale = 1f;    
+    }
+
 }
 
 public enum CurrentState{

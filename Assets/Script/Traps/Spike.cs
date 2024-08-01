@@ -10,6 +10,7 @@ public class Spike : MonoBehaviour
     public GameObject trap;
 
     private void Start() {
+        trap = transform.GetChild(0).gameObject;
         trap.SetActive(false);
     }
 

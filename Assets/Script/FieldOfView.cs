@@ -108,6 +108,7 @@ public class FieldOfView : MonoBehaviour
 
     public void SetAggro(float transparency)
     {
+        if (aggroMaterial == null) return;
         // Map the scale to the transparency range
         Color color = aggroMaterial.color;
         color.a = transparency; // Convert to [0,1] range for alpha

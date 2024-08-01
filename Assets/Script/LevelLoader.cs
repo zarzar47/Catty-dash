@@ -1,14 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class LevelLoader : MonoBehaviour
 {
     public static int levelComp = 0;
-    private static int currentLevel = 0;
-    private static int max_levels = 6;
+    public static int currentLevel = 0;
+    public static int max_levels = 9;
     public float loading_time = 3f;
     private IEnumerator ColoadLevel(int lvlNum){
 
