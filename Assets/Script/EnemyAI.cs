@@ -33,7 +33,7 @@ public class EnemyAI : MonoBehaviour
         particleSystem = GetComponentInChildren<ParticleSystem>();
         animator = GetComponent<Animator>();
         playerObj = FindObjectOfType<PlayerMovement>();
-        objFieldOfView = Instantiate(pfFieldOfView, null, false);
+        objFieldOfView = Instantiate(pfFieldOfView, null);
         fieldOfView = objFieldOfView.GetComponent<FieldOfView>();
         
         fieldOfView.SetOriginPoint(transform.position);
@@ -45,8 +45,8 @@ public class EnemyAI : MonoBehaviour
     }
 
     void Update(){
-        fieldOfView.SetOriginPoint(transform.position);
-        fieldOfView.SetAimDirection(transform.forward);
+         fieldOfView.SetOriginPoint(transform.position);
+         fieldOfView.SetAimDirection(transform.forward);
         DetectPlayer();
         
     }
@@ -88,6 +88,7 @@ public class EnemyAI : MonoBehaviour
     public void DetectPlayer(){
         if (!playerNotfound || dead)
             return;
+        
         if (PlayerInArea()){
             RaycastHit hit;
             Vector3 pos = playerObj.transform.position - transform.position;
@@ -95,21 +96,19 @@ public class EnemyAI : MonoBehaviour
             if (Vector3.Angle(-1 * transform.forward,pos) < FOV/2){
                 if (Physics.Raycast(transform.position, pos.normalized , out hit, viewDistance)){
                     if (hit.collider.tag == "Player"){
+                        Debug.Log("Player being found");
                         // If player not invisible, then continue, otherwise dont (Lets try to not make this coupled)
                         //if (!(hit.collider.gameObject.GetComponent<PlayerMovement>().invisible)) {
-                            float meter = Time.deltaTime / TimeToEnrage;
-                            fieldOfView.AddAggro(meter);
-                            if (fieldOfView.GetAggro() >= 1){
-                                PlayerFound();
-                            }
-                        //}
+                        float meter = Time.deltaTime / TimeToEnrage;
+                        fieldOfView.AddAggro(meter);
+                        if (fieldOfView.GetAggro() >= fieldOfView.MaxValue){
+                            PlayerFound();
+                        }
                     }
                 }
             }
         } else {
-            if (fieldOfView.GetAggro() > 0){
-                fieldOfView.DecreaseAggro(0.001f);
-            }
+                fieldOfView.DecreaseAggro(1f * Time.deltaTime);
         }
     }
 
