@@ -45,9 +45,11 @@ public class EnemyAI : MonoBehaviour
     }
 
     void Update(){
-         fieldOfView.SetOriginPoint(transform.position);
-         fieldOfView.SetAimDirection(transform.forward);
-        DetectPlayer();
+        fieldOfView.SetOriginPoint(transform.position);
+        fieldOfView.SetAimDirection(transform.forward);
+        if (!playerObj.invisible){
+            DetectPlayer();
+        }
         
     }
 

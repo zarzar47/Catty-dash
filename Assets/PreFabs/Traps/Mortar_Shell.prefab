@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4143782552687594234}
   - component: {fileID: 6638840975352381103}
   - component: {fileID: 6699329229354560783}
+  - component: {fileID: -1952110253395884615}
   m_Layer: 0
   m_Name: Mortar_Shell
   m_TagString: Untagged
@@ -133,3 +134,15 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &-1952110253395884615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3557411660402938529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cc917a1c116add4f897b29c32c82727, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
