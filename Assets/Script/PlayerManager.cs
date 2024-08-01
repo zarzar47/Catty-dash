@@ -4,12 +4,20 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-    public bool timeSlowDownUnlocked = true;
+    
 
+    public CurrentState state = CurrentState.Stationary;
+    public bool timeSlowDownUnlocked = true;
     public static PlayerManager Instance { get; private set;}
 
     private void  Awake()
     {
         Instance = this;
     }
+}
+
+public enum CurrentState{
+        Stationary,
+        Moving,
+        Dead,
 }

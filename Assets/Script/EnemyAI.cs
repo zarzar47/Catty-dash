@@ -5,7 +5,9 @@ using DG.Tweening;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Analytics;
+using UnityEngine.Animations;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
 public class EnemyAI : MonoBehaviour
 {
@@ -24,16 +26,17 @@ public class EnemyAI : MonoBehaviour
     private bool playerNotfound = true;
     private new ParticleSystem particleSystem;
     private bool dead = false;
+    public Transform center;
     // Start is called before the first frame update
     void Start()
     {
         particleSystem = GetComponentInChildren<ParticleSystem>();
         animator = GetComponent<Animator>();
         playerObj = FindObjectOfType<PlayerMovement>();
-        objFieldOfView = Instantiate(pfFieldOfView, null);
+        objFieldOfView = Instantiate(pfFieldOfView, null, false);
         fieldOfView = objFieldOfView.GetComponent<FieldOfView>();
         
-        fieldOfView.setOriginPoint(transform.position);
+        fieldOfView.SetOriginPoint(transform.position);
         fieldOfView.SetAimDirection(transform.forward);
         fieldOfView.SetDistance(viewDistance);
         fieldOfView.SetFov(FOV);
@@ -42,7 +45,7 @@ public class EnemyAI : MonoBehaviour
     }
 
     void Update(){
-        fieldOfView.setOriginPoint(transform.position);
+        fieldOfView.SetOriginPoint(transform.position);
         fieldOfView.SetAimDirection(transform.forward);
         DetectPlayer();
         
@@ -70,9 +73,16 @@ public class EnemyAI : MonoBehaviour
             return;
         }
         Destroy(objFieldOfView);
-        particleSystem.Play();
+        Invoke("DestroyObj",2f);
         animator.SetTrigger("dead");
         dead = true;
+    }
+
+    private void DestroyObj(){
+        particleSystem.Play();
+        Destroy(this.transform.GetChild(0).gameObject);
+        Destroy(this.gameObject, 3f);
+
     }
 
     public void DetectPlayer(){
@@ -85,20 +95,20 @@ public class EnemyAI : MonoBehaviour
             if (Vector3.Angle(-1 * transform.forward,pos) < FOV/2){
                 if (Physics.Raycast(transform.position, pos.normalized , out hit, viewDistance)){
                     if (hit.collider.tag == "Player"){
-                        // If player not invisible, then continue, otherwise dont
-                        if (!(hit.collider.gameObject.GetComponent<PlayerMovement>().invisible)) {
+                        // If player not invisible, then continue, otherwise dont (Lets try to not make this coupled)
+                        //if (!(hit.collider.gameObject.GetComponent<PlayerMovement>().invisible)) {
                             float meter = Time.deltaTime / TimeToEnrage;
-                            fieldOfView.addAggro(meter);
-                            if (fieldOfView.getAggro() >= 1){
+                            fieldOfView.AddAggro(meter);
+                            if (fieldOfView.GetAggro() >= 1){
                                 PlayerFound();
                             }
-                        }
+                        //}
                     }
                 }
             }
         } else {
-            if (fieldOfView.getAggro() > 0){
-                fieldOfView.decreaseAggro(0.001f);
+            if (fieldOfView.GetAggro() > 0){
+                fieldOfView.DecreaseAggro(0.001f);
             }
         }
     }

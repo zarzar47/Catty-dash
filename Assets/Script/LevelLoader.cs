@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,18 +9,32 @@ public class LevelLoader : MonoBehaviour
     public static int levelComp = 0;
     private static int currentLevel = 0;
     private static int max_levels = 1;
-    public void loadLevel(int lvlNum){
+    public float loading_time = 3f;
+    private IEnumerator ColoadLevel(int lvlNum){
+
+        SceneManager.LoadScene("Loading");
+        yield return new WaitForSeconds(loading_time);
+
         if (lvlNum <=max_levels){
             SceneManager.LoadScene("Level "+lvlNum);
             currentLevel = lvlNum;
             Debug.Log("current Level " +lvlNum);
         } else {
+            SceneManager.LoadScene("LevelNotAvail");
             Debug.Log("Level Not Available " +lvlNum);
         }
     }
 
+    public void loadLevel(int lvlNum){
+        StartCoroutine(ColoadLevel(lvlNum));
+    }
+
+    private void Awake() {
+        DontDestroyOnLoad(this);
+    }
+    
     public void LoadNext(){
-        loadLevel(currentLevel+1);
+        loadLevel(currentLevel + 1);
     }
 
     public void RestartLevel(){

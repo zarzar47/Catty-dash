@@ -77,12 +77,13 @@ public class FieldOfView : MonoBehaviour
         return n;
     }
 
-    public void setOriginPoint(Vector3 Origin){
+    public void SetOriginPoint(Vector3 Origin){
+        transform.position = Origin;
         origin_point = Origin;
     }
 
     public void SetAimDirection(Vector3 aimDirection){
-        startingAngle = GetAngleFromVectorFloat(aimDirection) - fov/2f;
+        startingAngle = GetAngleFromVectorFloat(aimDirection) - fov/2;
     }
 
     public void SetFov(float infov){
@@ -97,7 +98,7 @@ public class FieldOfView : MonoBehaviour
         this.layerMask = layerMask;
     }
 
-    public void setAggro(float scale){
+    public void SetAggro(float scale){
         if (aggroHead == null) return;
         Vector3 newscale = aggroHead.localScale;
         newscale.x = scale;
@@ -105,18 +106,18 @@ public class FieldOfView : MonoBehaviour
         aggroHead.localScale = newscale;
     }
 
-    public float getAggro(){
+    public float GetAggro(){
         if (aggroHead == null) return 0.0f;
         return aggroHead.localScale.x;
     }
 
-    public void decreaseAggro(float amount){
-        float aggro = getAggro();
-        setAggro(aggro - amount);
+    public void DecreaseAggro(float amount){
+        float aggro = GetAggro();
+        SetAggro(aggro - amount);
     }
 
-    public void addAggro(float amount){
-        decreaseAggro(-1*amount);
+    public void AddAggro(float amount){
+        DecreaseAggro(-1*amount);
     }
 
 }

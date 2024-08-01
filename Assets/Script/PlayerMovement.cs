@@ -29,13 +29,9 @@ public class PlayerMovement : MonoBehaviour
     private LevelManager levelManager;
     private AudioManager audioSource;
     private Vector3 mousePos;
-    public bool invisible = false;
-    public float invisibility_Duration = 2f;
-    public float invisibility_Active_Time = 0f;
-    private float alpha = 0.3f;
-    private float original_alpha;
-    public float after_Image_Time = 0.2f; //Time to spawn an afterimage
-    public float time_passed_wo_afterImage = 0f;
+    // public bool invisible = false;
+    // public float invisibility_Duration = 2f;
+    // public float invisibility_Active_Time = 0f;
     private PlayerManager playerManager;
     void Start()
     {
@@ -51,24 +47,15 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if(GetComponent<Rigidbody>().velocity.sqrMagnitude > 0.2f){
-            time_passed_wo_afterImage += Time.deltaTime;
-            if (time_passed_wo_afterImage > after_Image_Time){
-                time_passed_wo_afterImage = 0f;
-                //AfterImagePool.Instance.GetFromPool();
-            }
-        }
 
-        if(invisible){
-            invisibility_Active_Time += Time.deltaTime;
-            if (invisibility_Active_Time > invisibility_Duration){
-                invisible = false;
-            }
-            //implement something to make player translucent
-        }
-        else{
-            //player not translucent
-        }
+        // if(invisible){
+        //     invisibility_Active_Time += Time.deltaTime;
+        //     if (invisibility_Active_Time > invisibility_Duration){
+        //         invisible = false;
+        //     }
+        // }
+        // else{
+        // }
 
         if (Input.GetMouseButtonDown(0)){
             mousePos = GetMousePos();
@@ -127,6 +114,8 @@ public class PlayerMovement : MonoBehaviour
     private void SlingShotAction() {
         if (length == 0)
             return;
+        
+        playerManager.state = CurrentState.Moving;
         rigidbody.velocity = Vector3.zero;
         float var = length / maxDragLength;
 
@@ -156,6 +145,8 @@ public class PlayerMovement : MonoBehaviour
                     levelManager.UpdateScore(10);
                     audioSource.playClip(1); // 1 is slash
                     ai.playDeath();
+                    CameraShake.Shake(0.2f);
+                    ApplyReflection(other);
                 }
             } else {
                 ApplyReflection(other);
@@ -183,6 +174,11 @@ public class PlayerMovement : MonoBehaviour
         
         if (currentSpeed > maxSpeed) {
             rigidbody.velocity = rigidbody.velocity.normalized * maxSpeed;
+        }
+
+        if (rigidbody.velocity.magnitude < 0.1f){
+            rigidbody.velocity = Vector3.zero;
+            playerManager.state = CurrentState.Stationary;
         }
     }
 

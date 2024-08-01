@@ -208,6 +208,7 @@ GameObject:
   - component: {fileID: 2601624542295377275}
   - component: {fileID: 7957935091421580100}
   - component: {fileID: 6759866528475001321}
+  - component: {fileID: 8009924770854537279}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -300,6 +301,11 @@ MonoBehaviour:
   moveMultipler: 60
   maxDragLength: 120
   center: {fileID: 6383119504718988362}
+  invisible: 0
+  invisibility_Duration: 2
+  invisibility_Active_Time: 0
+  after_Image_Time: 0.2
+  time_passed_wo_afterImage: 0
 --- !u!95 &6759866528475001321
 Animator:
   serializedVersion: 5
@@ -321,6 +327,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8009924770854537279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5340364853370054871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c7bd2e57cc0d424d864426071e6b0a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeSlowDownUnlocked: 1
 --- !u!1001 &2198833540712663767
 PrefabInstance:
   m_ObjectHideFlags: 0
