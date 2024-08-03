@@ -30,7 +30,6 @@ public class PlayerMovement : MonoBehaviour
     private AudioManager audioSource;
     private Vector3 mousePos;
     private PlayerManager playerManager;
-    public bool input = true;
     void Start()
     {
         center = this.transform;
@@ -46,7 +45,7 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
 
-        if (input){
+        if (PlayerManager.input){
             if (Input.GetMouseButtonDown(0)){
                 mousePos = GetMousePos();
                 if (playerManager.timeSlowDownUnlocked) {
@@ -69,6 +68,7 @@ public class PlayerMovement : MonoBehaviour
 
 
     private void SlingShotTrajectory(Vector3 mousePos) {
+        
         if (Arrow == null){
             Arrow = Instantiate(arrowPrefab, transform.position, Quaternion.identity, transform);
         } else if (Arrow.activeSelf == false){

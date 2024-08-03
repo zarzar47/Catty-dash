@@ -1,13 +1,18 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class LaserGun : MonoBehaviour
 {
     private Transform tip;
+    public float cooldown = 2f;
+    private float timer = 0f;
     private LineRenderer lineRenderer;
     private BoxCollider laserCollider;
-
+    private Animator animator;
+    public bool enableCollider = false;
     void Start()
     {
+        animator = GetComponent<Animator>();
         // Initialize the LineRenderer component
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.positionCount = 2;
@@ -18,6 +23,7 @@ public class LaserGun : MonoBehaviour
 
         // Add a BoxCollider to represent the laser collision area
         laserCollider = transform.gameObject.AddComponent<BoxCollider>();
+        laserCollider.enabled = false;
         laserCollider.isTrigger = true;
 
         // Calculate the direction, center, and size of the BoxCollider
@@ -31,8 +37,18 @@ public class LaserGun : MonoBehaviour
         laserCollider.size = laserSize;
     }
 
+
+    void Update(){
+        timer += Time.deltaTime;
+        if (timer>=cooldown){
+            timer = 0f;
+            laserCollider.enabled = !enableCollider;
+            animator.SetTrigger("Lazer");
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
-    {
+    {   
         // Check if the player enters the laser's collider
         if (other.CompareTag("Player"))
         {

@@ -85,7 +85,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 1.96, y: 6.07, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4159701686631954254
 MonoBehaviour:
@@ -113,7 +113,7 @@ AudioSource:
   m_GameObject: {fileID: 3259333585569996121}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -1300525822374937437, guid: 95ee3f2a9172b544baf3ef1530abe50f, type: 2}
   m_audioClip: {fileID: 8300000, guid: 6eccd0f11b8456a49a0b164ab4676b1c, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1

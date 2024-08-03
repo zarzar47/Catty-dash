@@ -43,5 +43,9 @@ public class LevelManager : MonoBehaviour
         LevelLoader.levelComp+=1;
     }
 
+    public int GetScore(){
+        return Score;
+    }
+
 }
 

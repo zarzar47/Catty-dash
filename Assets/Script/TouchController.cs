@@ -6,7 +6,7 @@ public class TouchController : MonoBehaviour
 {
     private GameObject cursor;
     private void Start(){
-        cursor = transform.GetChild(2).gameObject;
+        cursor = transform.GetChild(0).gameObject;
         cursor.SetActive(false);
     }
 

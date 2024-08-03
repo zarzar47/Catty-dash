@@ -14,9 +14,12 @@ public class PlayerManager : MonoBehaviour
     public static PlayerManager Instance { get; private set;}
     private bool invisible = false;
     private String prev_tag = "";
+    
+    public static bool input = true;
 
     private void  Awake()
     {
+        playerMovement = GetComponent<PlayerMovement>();
         prev_tag = this.transform.gameObject.tag;
         Instance = this;
     }
@@ -27,12 +30,20 @@ public class PlayerManager : MonoBehaviour
     }
 
     private void OnDestroy() {
-        Time.timeScale = 1f;    
+        Time.timeScale = 1f;
     }
 
-    private void EnableInput(bool input){
-        playerMovement.input = input;
+
+    public void PauseGame(){
+        input = false;
+        Time.timeScale = 0f;
     }
+
+    public void UnPauseGame(){
+        input = true;
+        Time.timeScale = 1f;
+    }
+
 
     public void EnableInvisibility(float duration){
         invisible = true;
