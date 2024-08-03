@@ -24,6 +24,10 @@ public class LevelLoader : MonoBehaviour
         }
     }
 
+    public void loadCharacterScreen(){
+        SceneManager.LoadScene("Character Screen");
+    }
+
     public void loadLevel(int lvlNum){
         StartCoroutine(ColoadLevel(lvlNum));
     }

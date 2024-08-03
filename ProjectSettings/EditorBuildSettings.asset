@@ -47,4 +47,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LevelNotAvail.unity
     guid: 649829a476e8a3e4da22272f95d01418
+  - enabled: 1
+    path: Assets/Scenes/Character Screen.unity
+    guid: a2318c1f490301c4f9e360e0af436d13
   m_configObjects: {}
