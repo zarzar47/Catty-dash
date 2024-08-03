@@ -16,7 +16,6 @@ public class EnemyAI : MonoBehaviour
     public float viewDistance = 0;
     public float FOV = 90f;
     private bool enraged = false;
-    public LayerMask PlayerLayer;
     [SerializeField] private GameObject pfFieldOfView;
     private GameObject objFieldOfView;
     private FieldOfView fieldOfView;
@@ -46,9 +45,7 @@ public class EnemyAI : MonoBehaviour
     void Update(){
         fieldOfView.SetOriginPoint(transform.position);
         fieldOfView.SetAimDirection(transform.forward);
-        if (!playerObj.invisible){
-            DetectPlayer();
-        }
+        DetectPlayer();
         
     }
 
@@ -96,11 +93,9 @@ public class EnemyAI : MonoBehaviour
             Vector3 pos = playerObj.transform.position - transform.position;
             
             if (Vector3.Angle(-1 * transform.forward,pos) < FOV/2){
+                Debug.DrawRay(transform.position, pos);
                 if (Physics.Raycast(transform.position, pos.normalized , out hit, viewDistance)){
                     if (hit.collider.tag == "Player"){
-                        Debug.Log("Player being found");
-                        // If player not invisible, then continue, otherwise dont (Lets try to not make this coupled)
-                        //if (!(hit.collider.gameObject.GetComponent<PlayerMovement>().invisible)) {
                         float meter = Time.deltaTime / TimeToEnrage;
                         fieldOfView.AddAggro(meter);
                         if (fieldOfView.GetAggro() >= fieldOfView.MaxValue){

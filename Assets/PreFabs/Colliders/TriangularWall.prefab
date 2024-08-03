@@ -71,7 +71,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 751dcb29c84b2bd49b314a383e95561f, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: cd20eb55ffbc63a4ebbd6fb8b2b62ea4, type: 2}
+      objectReference: {fileID: 2100000, guid: 16abe854fdeaa674386ae0ef6b17a183, type: 2}
     - target: {fileID: 919132149155446097, guid: 751dcb29c84b2bd49b314a383e95561f, type: 3}
       propertyPath: m_Name
       value: TriangularWall

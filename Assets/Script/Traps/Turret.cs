@@ -5,20 +5,23 @@ using UnityEngine;
 public class Turret : MonoBehaviour
 {
 
-    public GameObject player;
-    public GameObject turret;
-    public GameObject gun;
+    private GameObject player;
+    private GameObject turret;
+    private GameObject tip;
     public float rotateSpeed;
     public GameObject bullet;
     public float waitTime = 2f;
     private float passedTime = 0f;
     public float bulletSpeed = 5f;
 
+    void Start(){
+        player = FindAnyObjectByType<PlayerManager>().gameObject;
+        turret = transform.GetChild(1).gameObject;
+        tip = turret.transform.GetChild(2).gameObject;
+    }
 
     void OnTriggerStay(Collider other)
     {
-        if (!player.GetComponent<PlayerMovement>().invisible)
-        {
             //Debug.Log("hit");
             if (other.tag == "Player")
             {
@@ -33,7 +36,6 @@ public class Turret : MonoBehaviour
                     passedTime = 0;
                 }
             }
-        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -43,7 +45,7 @@ public class Turret : MonoBehaviour
 
     void CreateBullet()
     {
-        GameObject shell = Instantiate(bullet, gun.transform.position, gun.transform.rotation);
-        shell.GetComponent<Rigidbody>().velocity = gun.transform.forward * bulletSpeed;
+        GameObject shell = Instantiate(bullet, tip.transform.position, tip.transform.rotation);
+        shell.GetComponent<Rigidbody>().velocity = tip.transform.forward * bulletSpeed;
     }
 }

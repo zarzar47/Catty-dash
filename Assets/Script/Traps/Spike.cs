@@ -4,35 +4,39 @@ using UnityEngine;
 
 public class Spike : MonoBehaviour
 {
-    private bool active = false;
-    private float cooldown = 2f;
+    public float cooldown = 2f;
     private float timer = 0f;
-    public GameObject trap;
+    public GameObject Spikes;
+    public Material activeMat;
+    private new MeshRenderer renderer;
+    private Material normal_mat;
+    private bool activated = false;
+    private Animator animator;
 
     private void Start() {
-        trap = transform.GetChild(0).gameObject;
-        trap.SetActive(false);
+        renderer = Spikes.GetComponent<MeshRenderer>();
+        normal_mat = renderer.sharedMaterial;
+        animator = GetComponent<Animator>();
     }
 
     private void OnTriggerEnter(Collider other) {
         if (other.tag == "Player"){
-            if (!other.GetComponent<PlayerMovement>().invisible){
-                active = true;
-                trap.SetActive(true);
-            }
+            other.GetComponent<PlayerManager>().killed();
         }
     }
     
+    private void ActivateTrap(){
+        activated = !activated;
+        renderer.material = activated? activeMat : normal_mat;
+        animator.SetTrigger("Spike");
+    }
     void Update()
     {
-        if (active){
             timer += Time.deltaTime;
             if (timer > cooldown){
-                active = false;
-                timer = 0;
-                trap.SetActive(false);
+                timer = 0f;
+                ActivateTrap();
             }
-        }
     }
 }
 

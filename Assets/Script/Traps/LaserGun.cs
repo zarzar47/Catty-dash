@@ -1,35 +1,47 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class LaserGun : MonoBehaviour
 {
-    public GameObject laser;
-    private float cooldownTimer = 0f;
-    public float cooldown = 2f;
-    public float activateTime = 2f;
-    private float activeTimer = 0f;
-    public bool active = false;
+    private Transform tip;
+    private LineRenderer lineRenderer;
+    private BoxCollider laserCollider;
 
-
-    // Update is called once per frame
-    void Update()
+    void Start()
     {
-        if (!active)
-            cooldownTimer += Time.deltaTime;
-        else
-            activeTimer += Time.deltaTime;
+        // Initialize the LineRenderer component
+        lineRenderer = GetComponent<LineRenderer>();
+        lineRenderer.positionCount = 2;
 
-        if (active && activeTimer >= activateTime){
-            activeTimer = 0f;
-            laser.SetActive(false);
-            active = false;
-        }
+        // Get the world positions of the start and end points
+        Vector3 localStart = lineRenderer.GetPosition(0);
+        Vector3 localEnd = lineRenderer.GetPosition(1);
 
-        if (!active && cooldownTimer >= cooldown){
-            cooldownTimer = 0f;
-            laser.SetActive(true);
-            active = true;
+        // Add a BoxCollider to represent the laser collision area
+        laserCollider = transform.gameObject.AddComponent<BoxCollider>();
+        laserCollider.isTrigger = true;
+
+        // Calculate the direction, center, and size of the BoxCollider
+        Vector3 laserDirection = localEnd - localStart;
+        float laserLength = laserDirection.magnitude;
+        Vector3 laserCenter = (localEnd + localStart) / 2;
+        Vector3 laserSize = new Vector3(localEnd.x == 0? 0.1f : laserLength, localEnd.y == 0? 0.1f : laserLength, localEnd.z == 0? 0.1f : laserLength); // Adjust the size as needed
+
+        // Set the BoxCollider's position and size
+        laserCollider.center = laserCenter;
+        laserCollider.size = laserSize;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        // Check if the player enters the laser's collider
+        if (other.CompareTag("Player"))
+        {
+            // Assuming the player has a PlayerManager script attached
+            PlayerManager playerManager = other.GetComponent<PlayerManager>();
+            if (playerManager != null)
+            {
+                playerManager.killed();
+            }
         }
     }
 }

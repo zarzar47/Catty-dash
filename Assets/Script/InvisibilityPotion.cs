@@ -8,10 +8,11 @@ public class InvisibilityPotion : MonoBehaviour
     public float invisibility_Duration = 2f;
      void OnTriggerEnter(Collider other)
      {
-         if (other.tag == "Player"){
-             other.GetComponent<PlayerMovement>().invisible = true;
-             other.GetComponent<PlayerMovement>().invisibilityDuration = invisibility_Duration;
+         if (other.tag == "Player")
+         {
+            
              Destroy(gameObject);
          }
+         
      }
 }

@@ -20,10 +20,8 @@ public class Bullet_Destruction : MonoBehaviour
     void OnCollisionEnter(Collision other)
     {
         if(other.gameObject.tag == "Player"){
-            if (!other.gameObject.GetComponent<PlayerMovement>().invisible){
                 Destroy(gameObject);
                 PlayerManager.Instance.killed();
-            }
         }
         else{
             Destroy(gameObject);

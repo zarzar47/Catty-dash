@@ -29,10 +29,8 @@ public class PlayerMovement : MonoBehaviour
     private LevelManager levelManager;
     private AudioManager audioSource;
     private Vector3 mousePos;
-     public bool invisible = false;
-     public float invisibilityDuration = 2f;
-     public float invisibility_Active_Time = 0f;
     private PlayerManager playerManager;
+    public bool input = true;
     void Start()
     {
         center = this.transform;
@@ -48,28 +46,20 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
 
-        if(invisible){
-            invisibility_Active_Time += Time.deltaTime;
-            if (invisibility_Active_Time > invisibilityDuration){
-                invisible = false;
+        if (input){
+            if (Input.GetMouseButtonDown(0)){
+                mousePos = GetMousePos();
+                if (playerManager.timeSlowDownUnlocked) {
+                    Debug.Log("Slowed");
+                    Time.timeScale = timeSlowDown;
+                }
+            } else if (Input.GetMouseButton(0)){
+                SlingShotTrajectory(mousePos);
+            } else if (Input.GetMouseButtonUp(0)){
+                SlingShotAction();
             }
-            //Add something to make the player translucent
         }
-        else{
-            //Something that does'nt make the player translucent
-        }
-
-        if (Input.GetMouseButtonDown(0)){
-            mousePos = GetMousePos();
-            if (playerManager.timeSlowDownUnlocked) {
-                Debug.Log("Slowed");
-                Time.timeScale = timeSlowDown;
-            }
-        } else if (Input.GetMouseButton(0)){
-            SlingShotTrajectory(mousePos);
-        } else if (Input.GetMouseButtonUp(0)){
-            SlingShotAction();
-        }
+        
     }
 
     void FixedUpdate(){

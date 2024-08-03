@@ -14,8 +14,6 @@ public class Mortar : MonoBehaviour
 
     void Update()
     {
-        if (!player.GetComponent<PlayerMovement>().invisible)
-        {
             passedTime += Time.deltaTime;
 
             Vector3 direction = (player.transform.position - this.transform.position).normalized;
@@ -35,7 +33,6 @@ public class Mortar : MonoBehaviour
                 this.transform.Translate(0, 0, moveSpeed * Time.deltaTime);
             }*/
             }
-        }
     }
 
     void Shoot()

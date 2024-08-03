@@ -10,7 +10,6 @@ public class ArrowTrap : MonoBehaviour
 
     private void OnTriggerEnter(Collider other) {
         if (other.tag == "Player"){
-            if (!other.GetComponent<PlayerMovement>().invisible)
                 shootArrows();
         }
     }
