@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using DG.Tweening;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -40,6 +41,12 @@ public class PlayerMovement : MonoBehaviour
         ArrowMat = arrowPrefab.GetComponentInChildren<MeshRenderer>().sharedMaterial;
         _particleController = GetComponentInChildren<ParticleController>();
         playerManager = PlayerManager.Instance;
+        if (playerManager.disableSpikesUnlocked){
+            Spike[] spikes = FindObjectsOfType<Spike>();
+            foreach (Spike spike in spikes){
+                spike.gameObject.SetActive(false);
+            }
+        }
     }
 
     void Update()
