@@ -42,7 +42,7 @@ public class LaserGun : MonoBehaviour
         timer += Time.deltaTime;
         if (timer>=cooldown){
             timer = 0f;
-            laserCollider.enabled = !enableCollider;
+            enableCollider = laserCollider.enabled = !enableCollider;
             animator.SetTrigger("Lazer");
         }
     }

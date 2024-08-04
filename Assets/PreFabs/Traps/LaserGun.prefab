@@ -120,6 +120,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4156e41c2c5e6f54685bfa5441068176, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cooldown: 2
+  enableCollider: 0
 --- !u!95 &4465259877706079143
 Animator:
   serializedVersion: 5

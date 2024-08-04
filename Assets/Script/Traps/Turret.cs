@@ -28,8 +28,8 @@ public class Turret : MonoBehaviour
                 passedTime += Time.deltaTime;
                 Vector3 difference = player.transform.position - turret.transform.position;
                 Quaternion lookRotation = Quaternion.LookRotation(difference);
-                //turret.transform.LookAt(difference);
-                turret.transform.rotation = Quaternion.Slerp(turret.transform.rotation, lookRotation, Time.deltaTime * rotateSpeed);
+                turret.transform.LookAt(other.transform.position);
+                //turret.transform.rotation = Quaternion.Slerp(turret.transform.rotation, lookRotation, Time.deltaTime * rotateSpeed);
                 if (passedTime >= waitTime)
                 {
                     CreateBullet();
@@ -45,7 +45,7 @@ public class Turret : MonoBehaviour
 
     void CreateBullet()
     {
-        GameObject shell = Instantiate(bullet, tip.transform.position, tip.transform.rotation);
+        GameObject shell = Instantiate(bullet, tip.transform.position, Quaternion.identity);
         shell.GetComponent<Rigidbody>().velocity = tip.transform.forward * bulletSpeed;
     }
 }
